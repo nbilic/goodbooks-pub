@@ -6,29 +6,26 @@ const Comment = require("../models/Comments");
 const verify = require("../middleware/verify");
 const router = require("express").Router();
 const axios = require("axios");
-//Admin book upload
-router.post("/upload", verify, async (req, res) => {
-  if (req.body.isAdmin) {
-    try {
-      const newBook = new Book({
-        title: req.body.title,
-        authors: req.body.authors,
-        publisher: req.body.publisher,
-        description: req.body.description,
-        language: req.body.language,
-      });
 
-      const book = await newBook.save();
-      res.status(200).json(book);
-    } catch (error) {
-      res.status(500).json(error);
-    }
-  } else {
-    res.status(500).json("Only admin can upload a new book");
+//GET EVERY BOOK FROM DB
+router.get("/all/books", async (req, res) => {
+  try {
+    const books = await Book.find({});
+    const filtered = books.filter(
+      (f) =>
+        !f.title
+          .toUpperCase()
+          .indexOf(req.query.filter.toUpperCase() || !f.approved)
+    );
+    //console.log(filtered);
+    res.status(200).json(filtered);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json(error);
   }
 });
 
-//User book upload
+//USER BOOK UPLOAD
 router.post("/upload2", async (req, res) => {
   try {
     const userId = await User.findOne({ username: req.body.username });
@@ -67,7 +64,70 @@ router.post("/upload2", async (req, res) => {
   }
 });
 
-//get all books from user
+//ADD BOOK SUGGESTION
+router.post("/suggestion", async (req, res) => {
+  try {
+    await Book.create({
+      title: req.body.book.title,
+      authors: req.body.book.authors,
+      edition: req.body.book.edition,
+      pages: req.body.book.pages,
+      genre: req.body.book.genre,
+      cover: req.body.book.cover,
+      google: false,
+      submittedBy: req.body.username,
+    });
+
+    res.status(200).json("ok");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
+//ACCEPT BOOK SUGGESTION
+router.put("/suggestion/approve/:id", async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
+    book.approved = true;
+    book.save();
+    res.status(200).json("APPROVED");
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json(error);
+  }
+});
+
+//ACCEPT BOOK SUGGESTION
+router.delete("/suggestion/denie/:id", async (req, res) => {
+  try {
+    const book = await Book.findByIdAndDelete(req.params.id);
+    res.status(200).json("DELETED");
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json(error);
+  }
+});
+
+//UPDATE BOOK REVIEW
+router.put("/:id", async (req, res) => {
+  try {
+    const userbook = await UserBook.findById(req.params.id);
+    req.body.cover && (userbook.cover = req.body.cover);
+    userbook.save();
+
+    const review = await Review.findById(userbook.review);
+
+    req.body.text && (review.text = req.body.text);
+    req.body.rating && (review.rating = req.body.rating);
+    review.save();
+    return res.status(200).json("OK");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error });
+  }
+});
+//GET ALL BOOKS FROM USER
 router.get("/all/:username", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username });
@@ -81,15 +141,24 @@ router.get("/all/:username", async (req, res) => {
             "https://www.googleapis.com/books/v1/volumes?fields=items(volumeInfo(title,authors,publishedDate,pageCount,categories,imageLinks,industryIdentifiers))&maxResults=10&q=isbn:";
           bookInfo = await axios.get(`${url}${book.bookId}`);
         } else {
-          // FOR LATER
+          const res = await Book.findById(book.bookId);
+
+          bookInfo = {
+            title: res.title,
+            authors: res.authors,
+            publishedDate: res.edition,
+            pageCount: res.pages,
+            categories: res.genre,
+          };
         }
         const cover = book.cover;
         const review = await Review.findOne({ userBookId: book._id });
 
         return {
+          bookId: book.bookId,
           review,
           cover,
-          bookInfo: bookInfo.data.items[0].volumeInfo,
+          bookInfo: bookInfo?.data?.items[0]?.volumeInfo || bookInfo,
         };
         //return { review, cover, bookInfo };
       })
@@ -97,12 +166,24 @@ router.get("/all/:username", async (req, res) => {
 
     res.status(200).json(userBooks);
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(500).json(error);
   }
 });
 
-//get a single book
+//GET PENDINGS BOOKS
+router.get("/pending", async (req, res) => {
+  try {
+    const books = await Book.find({ approved: false });
+    console.log(books);
+    res.status(200).json(books);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(err);
+  }
+});
+
+//GET A SINGLE BOOK
 router.get("/:id", async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
@@ -112,7 +193,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//Get comments on a user book
+//GET COMMENTS ON A BOOK
 router.get("/comments/:id", async (req, res) => {
   try {
     const comments = await (
@@ -138,7 +219,8 @@ router.get("/comments/:id", async (req, res) => {
     return res.status(500).json({ message: error });
   }
 });
-//Add a comment
+
+//ADD A COMMENT
 router.post("/comment", async (req, res) => {
   try {
     // Get user id
@@ -166,7 +248,7 @@ router.post("/comment", async (req, res) => {
   }
 });
 
-//Delete a comment
+//DELETE COMMENT
 router.delete("/comment/:id", async (req, res) => {
   try {
     await Comment.findOneAndDelete({ _id: req.params.id });

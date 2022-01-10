@@ -45,16 +45,15 @@ router.post("/login", async (req, res) => {
     );
 
     if (!validPassword)
-      return res.status(400).json({ message: "Wrong password" });
+      return res.status(400).json({ message: "Authentication failed" });
     const token = jwt.sign(
       { username: user.username, email: user.email },
       process.env.JWT_SECRET
     );
 
-    const { avatar, username, email, isAdmin } = user._doc;
-    res.status(200).json({ token, avatar, username, email, isAdmin });
+    const { avatar, username, email, isAdmin, banned } = user._doc;
+    res.status(200).json({ token, avatar, username, email, isAdmin, banned });
   } catch (error) {
-    console.log("called");
     console.log(error);
     res.status(500).json(error);
   }

@@ -10,24 +10,25 @@ const bookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    publisher: {
-      type: String,
-    },
     edition: {
-      type: String,
-    },
-    description: {
       type: String,
     },
     pages: {
       type: Number,
     },
     genre: {
-      type: [String],
+      type: String,
       required: true,
     },
-    language: {
-      type: String,
+    cover: String,
+    submittedBy: String,
+    approved: {
+      type: Boolean,
+      default: false,
+    },
+    google: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

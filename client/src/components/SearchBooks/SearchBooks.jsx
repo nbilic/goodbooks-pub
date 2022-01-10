@@ -1,108 +1,76 @@
-import { useState, useEffect } from "react";
-import { Header } from "../index";
+import { useState } from "react";
+import { Grid, Paper } from "@mui/material";
 import axios from "axios";
-import { Button, Modal, Grid, Typography, Paper } from "@mui/material";
-import useStyles from "./SearchBooksStyles";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "50%",
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-};
-
-const SearchBooks = ({ autoFill, title, setModal }) => {
+import useStyles from "./SearchBookStyles";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import { Header, SuggestedBook, SearchBooksInputField } from "../index";
+import apiUrl from "../apiUrl";
+const Test = () => {
   const [books, setBooks] = useState([]);
-  //const [title, setTitle] = useState("");
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    setModal(false);
-  };
   const classes = useStyles({});
-  const getBooks = async (title) => {
+  const [title, setTitle] = useState("");
+  const [error, setError] = useState(false);
+  const getBooks = async () => {
     const url = "https://www.googleapis.com/books/v1/volumes";
     const fields =
-      "?fields=items(volumeInfo(title,authors,publishedDate,pageCount,categories,imageLinks,industryIdentifiers))&maxResults=40&q=intitle:";
+      "?fields=items(id,volumeInfo(title,authors,averageRating,ratingsCount,publishedDate,pageCount,categories,imageLinks,industryIdentifiers))&maxResults=40&q=intitle:";
     try {
       const result = await axios.get(`${url}${fields}${title}`);
-      setBooks(result.data.items);
-      handleOpen();
+      const filtered = result.data.items.filter((f) => {
+        let isbn = false;
+        let cover = f.volumeInfo?.imageLinks?.thumbnail || null;
+        let title = f.volumeInfo?.title || null;
+        let authors = f.volumeInfo?.authors || null;
+        f?.volumeInfo?.industryIdentifiers?.forEach((id) => {
+          if (["ISBN_13", "ISBN_10"].includes(id.type)) isbn = true;
+        });
+        if (isbn && cover && title && authors) return f;
+      });
+
+      const res = await axios.get(`${apiUrl}/api/books/all/books`, {
+        params: { filter: title },
+      });
+      setError(false);
+      setBooks([...res.data, ...filtered]);
     } catch (error) {
-      console.log(error.response);
+      setError(true);
+      console.log(error);
     }
   };
 
-  const handleClick = (book) => {
-    const payload = {
-      title: book.volumeInfo.title,
-      authors: book.volumeInfo.authors,
-      genre: book.volumeInfo.categories,
-      cover: book.volumeInfo.imageLinks?.thumbnail,
-      edition: book.volumeInfo.publishedDate,
-      pages: book.volumeInfo.pageCount,
-      bookId: book.volumeInfo.industryIdentifiers[1]?.identifier
-        ? book.volumeInfo.industryIdentifiers[1]?.identifier
-        : book.volumeInfo.industryIdentifiers[0]?.identifier,
-    };
-
-    autoFill(payload);
-    handleClose();
+  const notify = () => {
+    return toast.success("Book added!", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
-
-  useEffect(() => {
-    getBooks(title);
-  }, []);
-
   return (
-    <Paper elevation={5}>
-      <Modal
-        open={open}
-        sx={{ overflow: "scroll" }}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <>
-          <Paper elevation={5} className={classes.modal}>
-            <Grid container sx={{ border: "2px solid #000" }}>
-              {books?.map((book, index) => (
-                <>
-                  {
-                    <Grid
-                      item
-                      lg={3}
-                      md={6}
-                      sm={12}
-                      xs={12}
-                      key={book.id}
-                      className={classes.bookPreview}
-                      // onClick={() => handleClick(book)}
-                    >
-                      <img
-                        src={book?.volumeInfo?.imageLinks?.thumbnail}
-                        alt=""
-                        className={classes.thumbnail}
-                      />
-                      <div className={classes.bookInfo}>
-                        <p>{book?.volumeInfo?.title}</p>
-                        <p>{book?.volumeInfo?.authors}</p>
-                      </div>
-                    </Grid>
-                  }
-                </>
-              ))}
-            </Grid>
-          </Paper>
-        </>
-      </Modal>
-    </Paper>
+    <div>
+      <Header />
+      <Paper elevation={10} className={classes.container}>
+        <SearchBooksInputField
+          setTitle={setTitle}
+          title={title}
+          getBooks={getBooks}
+        />
+        {error && "No results match parameters"}
+        {!error && (
+          <Grid container className={classes.modal}>
+            {books?.map((book, index) => (
+              <SuggestedBook book={book} key={book.id} notify={notify} />
+            ))}
+          </Grid>
+        )}
+      </Paper>
+      <ToastContainer />
+    </div>
   );
 };
 
-export default SearchBooks;
+export default Test;

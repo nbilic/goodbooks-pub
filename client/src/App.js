@@ -11,7 +11,7 @@ import {
   AdminPanel,
 } from "./pages/index";
 import { useSelector } from "react-redux";
-import { Test } from "./components/index";
+import { SearchBooks } from "./components/index";
 import { useEffect } from "react";
 import { updateUser } from "./redux/api";
 import { useDispatch } from "react-redux";
@@ -30,7 +30,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Signup />} />
         <Route path="/profile/:username" element={<Profile />} />
-        <Route path="/upload" element={<Test />} />
+        <Route path="/upload" element={<SearchBooks />} />
         <Route path="/book/:id" element={<DisplayReview />} />
         <Route path="/profile/:username/friends" element={<FriendList />} />
         <Route path="/search/:filter" element={<FilteredUsers />} />

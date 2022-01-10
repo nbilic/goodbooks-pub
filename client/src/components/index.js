@@ -13,7 +13,7 @@ export { default as SearchUsers } from "./SearchUsers/SearchUsers";
 export { default as FormInput } from "./FormInput/FormInput";
 export { default as Login } from "./Login/Login";
 export { default as Register } from "./Register/Register";
-export { default as Test } from "./Test/Test";
+//export { default as Test } from "./SearchBooks/SearchBooks";
 export { default as Report } from "./Report/Report";
 export { default as DisplayReports } from "./DisplayReports/DisplayReports";
 export { default as SuggestedBook } from "./SuggestedBook/SuggestedBook";

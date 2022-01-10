@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Header } from "../index";
 import axios from "axios";
-import { Button, Modal, Grid, Typography } from "@mui/material";
+import { Button, Modal, Grid, Typography, Paper } from "@mui/material";
 import useStyles from "./SearchBooksStyles";
 
 const style = {
@@ -26,16 +26,15 @@ const SearchBooks = ({ autoFill, title, setModal }) => {
   };
   const classes = useStyles({});
   const getBooks = async (title) => {
-    //setBooks(title.replace("+", " "));
     const url = "https://www.googleapis.com/books/v1/volumes";
     const fields =
-      "?fields=items(volumeInfo(title,authors,publishedDate,pageCount,categories,imageLinks,industryIdentifiers))&maxResults=10&q=intitle:";
+      "?fields=items(volumeInfo(title,authors,publishedDate,pageCount,categories,imageLinks,industryIdentifiers))&maxResults=40&q=intitle:";
     try {
       const result = await axios.get(`${url}${fields}${title}`);
       setBooks(result.data.items);
       handleOpen();
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
     }
   };
 
@@ -47,7 +46,9 @@ const SearchBooks = ({ autoFill, title, setModal }) => {
       cover: book.volumeInfo.imageLinks?.thumbnail,
       edition: book.volumeInfo.publishedDate,
       pages: book.volumeInfo.pageCount,
-      bookId: book.volumeInfo.industryIdentifiers[1].identifier,
+      bookId: book.volumeInfo.industryIdentifiers[1]?.identifier
+        ? book.volumeInfo.industryIdentifiers[1]?.identifier
+        : book.volumeInfo.industryIdentifiers[0]?.identifier,
     };
 
     autoFill(payload);
@@ -59,7 +60,7 @@ const SearchBooks = ({ autoFill, title, setModal }) => {
   }, []);
 
   return (
-    <div>
+    <Paper elevation={5}>
       <Modal
         open={open}
         sx={{ overflow: "scroll" }}
@@ -68,41 +69,39 @@ const SearchBooks = ({ autoFill, title, setModal }) => {
         aria-describedby="modal-modal-description"
       >
         <>
-          <div className={classes.modal}>
+          <Paper elevation={5} className={classes.modal}>
             <Grid container sx={{ border: "2px solid #000" }}>
-              {books?.map((book) => (
-                <Grid
-                  item
-                  lg={6}
-                  md={6}
-                  sm={12}
-                  xs={12}
-                  key={book.id}
-                  className={classes.bookPreview}
-                  onClick={() => handleClick(book)}
-                >
-                  <img
-                    src={book?.volumeInfo?.imageLinks?.thumbnail}
-                    alt=""
-                    className={classes.thumbnail}
-                  />
-                  <div className={classes.bookInfo}>
-                    <p>{book?.volumeInfo?.title}</p>
-                    <p>{book?.volumeInfo?.authors}</p>
-                  </div>
-                </Grid>
+              {books?.map((book, index) => (
+                <>
+                  {
+                    <Grid
+                      item
+                      lg={3}
+                      md={6}
+                      sm={12}
+                      xs={12}
+                      key={book.id}
+                      className={classes.bookPreview}
+                      // onClick={() => handleClick(book)}
+                    >
+                      <img
+                        src={book?.volumeInfo?.imageLinks?.thumbnail}
+                        alt=""
+                        className={classes.thumbnail}
+                      />
+                      <div className={classes.bookInfo}>
+                        <p>{book?.volumeInfo?.title}</p>
+                        <p>{book?.volumeInfo?.authors}</p>
+                      </div>
+                    </Grid>
+                  }
+                </>
               ))}
             </Grid>
-            <div className={classes.button}>
-              <Button className={classes.button} variant="contained">
-                {" "}
-                CLOSE MODAL{" "}
-              </Button>
-            </div>
-          </div>
+          </Paper>
         </>
       </Modal>
-    </div>
+    </Paper>
   );
 };
 

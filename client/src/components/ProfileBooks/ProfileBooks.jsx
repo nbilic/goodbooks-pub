@@ -74,10 +74,10 @@ const ProfileBooks = () => {
             Newest
           </option>
           <option value={3} className={classes.option}>
-            Asc.
+            Name Asc.
           </option>
           <option value={4} className={classes.option}>
-            Desc.
+            Name Desc.
           </option>
           <option value={5} className={classes.option}>
             Rating Asc.
@@ -105,6 +105,7 @@ const ProfileBooks = () => {
                 review: book.review,
                 cover: book.cover,
                 username: username,
+                bookId: book.bookId,
               }}
             >
               <img

@@ -13,9 +13,8 @@ router.get("/all/books", async (req, res) => {
     const books = await Book.find({});
     const filtered = books.filter(
       (f) =>
-        !f.title
-          .toUpperCase()
-          .indexOf(req.query.filter.toUpperCase() || !f.approved)
+        !f.title.toUpperCase().indexOf(req.query.filter.toUpperCase()) ||
+        !f.approved
     );
     //console.log(filtered);
     res.status(200).json(filtered);

@@ -50,7 +50,8 @@ const Login = ({ setLogin }) => {
         { withCredentials: true }
       );
 
-      //console.log(response.data);
+      console.log(response.data);
+
       await updateUser(response.data, dispatch);
       navigate(`/profile/${response.data.username}`);
     } catch (error) {

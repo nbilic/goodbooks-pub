@@ -3,12 +3,13 @@ const useStyles = makeStyles((theme) => ({
   container: {
     minHeight: "100vh",
     position: "relative",
+    backgroundColor: "wheat",
   },
   bookPreview: {
     padding: 20,
     display: "flex",
     alignItems: "center",
-
+    backgroundColor: "wheat",
     borderBottom: "1px solid black",
     transition: ".1s",
     "&:hover": {
@@ -19,20 +20,23 @@ const useStyles = makeStyles((theme) => ({
   },
   bookInfo: {
     marginLeft: 20,
+    width: "100%",
   },
   thumbnail: {
-    maxHeight: 64,
+    height: 240,
   },
   modal: {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "80%",
-
-    height: "80%",
+    width: "50%",
+    backgroundColor: "wheat",
+    padding: 10,
     boxShadow: 24,
     overflowY: "auto",
+    borderRadius: 5,
+
     [theme.breakpoints.down("xs")]: {
       width: "100%",
       top: "0",
@@ -41,9 +45,18 @@ const useStyles = makeStyles((theme) => ({
       margin: "auto",
     },
   },
+  container: {
+    width: "100%",
+    display: "flex",
+  },
+
   button: {
     display: "flex",
-    justifyContent: "auto",
+    justifyContent: "flex-end",
+
+    marginTop: 5,
+  },
+  input: {
     width: "100%",
   },
 }));

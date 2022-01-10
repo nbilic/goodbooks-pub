@@ -6,9 +6,6 @@ const useStyles = makeStyles((theme) => ({
     width: "50%",
     margin: "auto",
     display: "flex",
-    [theme.breakpoints.up("1921")]: {
-      width: "40%",
-    },
     [theme.breakpoints.down("md")]: {
       width: "80%",
     },
@@ -21,8 +18,15 @@ const useStyles = makeStyles((theme) => ({
     height: "inherit",
     display: "flex",
     flexDirection: "column",
-    alignItems: "space-between",
     justifyContent: "space-between",
+    alignItems: "center",
+  },
+  icons: {
+    color: "green",
+    "&:hover": {
+      cursor: "pointer",
+      color: "red",
+    },
   },
   noCover: {
     height: 220,
@@ -35,58 +39,21 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   cover: {
-    height: 220,
-    width: 140,
+    height: 260,
+    width: 160,
     margin: "20px auto",
     marginTop: "50px",
   },
-  tips: {
-    width: "65%",
-    margin: "auto",
-    backgroundColor: "wheat",
-    paddingBottom: "5px",
-    boxShadow: "2px 2px grey",
-  },
-  liItem: {
-    padding: 5,
-    margin: "10px 15px 10px 20px",
-  },
-  tipsHeader: {
-    textAlign: "center",
-    borderBottom: "2px solid black",
-  },
-  bar: {
-    borderBottom: "2px solid black",
-    margin: "2px 0px",
-  },
 
-  // RIGHT SIDE OF THE INPUT CARD
   rightSideCard: {
     width: "70%",
-    border: "0px solid black",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-evenly",
-    padding: 50,
-  },
-  required: {
-    color: "red",
-    marginLeft: 5,
-  },
-  button: {
-    backgroundColor: "lightgreen",
-    borderRadius: 10,
-    border: "none",
-    padding: "5px 15px",
-    "&:hover": {
-      cursor: "pointer",
-    },
+    padding: 30,
   },
   inputArea: {
     display: "flex",
     marginBottom: 15,
-
-    //justifyContent: "space-between",
   },
   inputField: {
     position: "relative",
@@ -94,10 +61,14 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 15,
     border: "1px solid black",
     width: "100%",
-    padding: 10,
+    padding: "5px 10px",
+    "&:focus": {
+      outline: "none",
+    },
   },
-  checkButton: {
-    marginLeft: 10,
+  ratingArea: {
+    display: "flex",
+    alignItems: "center",
   },
   reviewInput: {
     marginTop: 10,
@@ -106,24 +77,69 @@ const useStyles = makeStyles((theme) => ({
     boxSizing: "border-box",
     resize: "none",
     padding: 15,
+    minHeight: 200,
+    color: "black",
+    fontFamily: "arial",
+    fontSize: 12,
   },
   submitButton: {
     marginTop: 20,
     padding: "10px 50px",
   },
-  submitButtonDiv: {
-    display: "flex",
-    //justifyContent: "center",
-    margin: "auto",
-    marginRight: 10,
-    width: "100%",
-  },
   pageType: {
+    margin: 50,
     marginLeft: 100,
-    marginTop: 20,
     color: "black",
     borderBottom: "2px solid black",
     width: "fit-content",
+  },
+  actionButtonsDiv: {
+    width: "100%",
+    display: "flex",
+    alignSelf: "flex-end",
+    justifyContent: "flex-end",
+  },
+  userOptions: {
+    display: "flex",
+    alignItems: "center",
+  },
+  whiteSpace: {
+    height: 20,
+  },
+  editIcon: {
+    color: "green",
+    "&:hover": {
+      cursor: "pointer",
+    },
+    width: "fit-content",
+    marginRight: 10,
+  },
+  deleteIcon: {
+    color: "red",
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
+  link: {
+    textDecoration: "none",
+    color: "crimson",
+  },
+  thumbnail: {
+    height: 124,
+    width: 86,
+  },
+  body: {
+    display: "flex",
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottom: "1px dashed black",
+  },
+  bookInfo: {
+    marginLeft: 20,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-evenly",
   },
 }));
 

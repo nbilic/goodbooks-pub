@@ -20,11 +20,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/api";
 import axios from "axios";
 import apiUrl from "../apiUrl";
-//const apiUrl = "https://goodbooks-550.herokuapp.com";
-//const apiUrl = "http://localhost:8080";
-
-// LOGOUT THING
-//  <p onClick={() => logoutUser(dispatch)}>Logout</p>
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -41,6 +36,7 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <AppBar position="sticky">
       <Toolbar className={classes.navbar}>
@@ -113,12 +109,22 @@ const Header = () => {
                     onClick={() => {
                       handleClose();
                       logoutUser(dispatch);
-
                       navigate("/login");
                     }}
                   >
                     Logout
                   </MenuItem>
+                  {user.isAdmin && (
+                    <MenuItem
+                      className={`${classes.dropDownMenuItem} `}
+                      onClick={() => {
+                        handleClose();
+                        navigate("/admin/dashboard");
+                      }}
+                    >
+                      Admin Panel
+                    </MenuItem>
+                  )}
                 </Menu>
               </>
             ) : (

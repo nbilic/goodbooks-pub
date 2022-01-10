@@ -1,19 +1,19 @@
 import useStyles from "./SearchUsersStyles";
 import { useLocation, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Paper, Typography, Avatar } from "@mui/material";
+import { Paper, Typography, Avatar, LinearProgress } from "@mui/material";
 import axios from "axios";
 import apiUrl from "../apiUrl";
-//const apiUrl = "https://goodbooks-550.herokuapp.com";
-//const apiUrl = "http://localhost:8080";
+
 const SearchUsers = () => {
   const classes = useStyles({});
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const { filter } = location.state;
-  console.log(filter);
   useEffect(() => {
     const getUsers = async () => {
+      setLoading(true);
       try {
         const res = await axios.post(
           `${apiUrl}/api/users/filter`,
@@ -24,12 +24,15 @@ const SearchUsers = () => {
         );
 
         setUsers(res.data);
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
     };
     filter.length > 0 && getUsers();
   }, [filter]);
+
+  if (loading) return <LinearProgress />;
   return (
     <Paper elevation={5} className={classes.container}>
       {users.length <= 0 && (

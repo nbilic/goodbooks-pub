@@ -5,7 +5,7 @@ import {
   Comments,
 } from "../../components/index";
 import { useLocation } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useState } from "react";
 import useStyles from "./DisplayReviewStyles";
 
@@ -29,7 +29,7 @@ const DisplayReview = () => {
         username={username}
       />
       <div className={classes.commentContainer}>
-        {user.active && (
+        {user.active && !user.banned && (
           <AddComment
             userBook={review.userBookId}
             addNewComments={addNewComments}

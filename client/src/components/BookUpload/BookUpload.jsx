@@ -1,8 +1,6 @@
-import { Typography, Grid, Paper, Button, Rating } from "@mui/material";
-//import { Rating } from "react-simple-star-rating";
+import { Typography, Grid, Paper, Button } from "@mui/material";
 import { useState } from "react";
 import useStyles from "./BookUploadStyles";
-import { SearchBooks } from "../index";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,74 +9,54 @@ import apiUrl from "../apiUrl";
 
 const BookUpload = () => {
   const classes = useStyles({});
-  const [rating, setRating] = useState(0);
-  const [cover, setCover] = useState(false);
-  const [title, setTitle] = useState("");
-  const [authors, setAuthors] = useState("");
-  const [genre, setGenre] = useState("");
-  const [edition, setEdition] = useState("");
-  const [pages, setPages] = useState("");
-  const [review, setReview] = useState("");
-  const [modal, setModal] = useState(false);
-  const [bookId, setBookId] = useState(null);
   const user = useSelector((state) => state.user.user);
-
-  /*   const handleRating = (rate) => {
-    setRating(rate);
-  }; */
+  const [book, setBook] = useState({
+    title: "",
+    authors: "",
+    genre: "",
+    edition: "",
+    pages: "",
+    cover: false,
+  });
 
   const handleSubmit = async () => {
     try {
-      await axios.post(
-        `${apiUrl}/api/books/upload2`,
-        {
-          username: user.username,
-          google: true,
-          bookId: bookId,
-          review: {
-            text: review,
-            rating: rating,
-          },
-          cover: cover,
-        },
-        { withCredentials: true }
-      );
+      await axios.post(`${apiUrl}/api/books/suggestion`, {
+        username: user.username,
+        google: false,
+        book: book,
+      });
       resetFields();
       notify();
     } catch (error) {
       console.log(error);
     }
+    console.log(book);
   };
 
   const resetFields = () => {
-    setTitle("");
-    setAuthors("");
-    setGenre("");
-    setCover(null);
-    setEdition("");
-    setPages("");
-    setReview("");
-  };
-  const autoFill = (payload) => {
-    payload.title && setTitle(payload.title);
-    payload.authors && setAuthors(payload.authors);
-    payload.genre && setGenre(payload.genre);
-    payload.cover && setCover(payload.cover);
-    payload.edition && setEdition(payload.edition);
-    payload.pages && setPages(payload.pages);
-    payload.bookId && setBookId(payload.bookId);
+    setBook({
+      title: "",
+      authors: "",
+      genre: "",
+      edition: "",
+      pages: "",
+      review: "",
+      bookId: null,
+      cover: false,
+    });
   };
 
   const toDataURL = (file) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      setCover(reader.result);
+      setBook({ ...book, cover: reader.result });
     };
     reader.readAsDataURL(file);
   };
 
   const notify = () =>
-    toast.success("Book added!", {
+    toast.success("Suggestion sent!", {
       position: "bottom-left",
       autoClose: 5000,
       hideProgressBar: false,
@@ -87,6 +65,7 @@ const BookUpload = () => {
       draggable: true,
       progress: undefined,
     });
+
   return (
     <>
       <div className={classes.pageType}>
@@ -94,28 +73,33 @@ const BookUpload = () => {
       </div>
       <Paper elevation={15} className={classes.inputCard}>
         <div className={classes.leftSideCard}>
-          {cover && (
+          {book.cover && (
             <>
-              <img src={cover} alt="cover" className={classes.cover} />
-              <Button onClick={() => setCover(null)}>Remove cover</Button>
+              <img src={book.cover} alt="cover" className={classes.cover} />
+              <Button onClick={() => setBook({ ...book, cover: null })}>
+                Remove cover
+              </Button>
             </>
           )}
-          {!cover && (
+          {!book.cover && (
             <div className={`${classes.cover} ${classes.noCover}`}>
               <Button
                 className={`${classes.cover} ${classes.noCover}`}
-                component="label-"
+                component="label"
               >
                 Add cover
                 <input
                   type="file"
                   hidden
-                  onChange={(e) => setCover(toDataURL(e.target.files[0]))}
+                  accept="image/jpeg"
+                  onChange={(e) =>
+                    setBook({ ...book, cover: toDataURL(e.target.files[0]) })
+                  }
                 />
               </Button>
             </div>
           )}
-          <div className={classes.tips}>
+          {/* <div className={classes.tips}>
             <Typography variant="body1" className={classes.tipsHeader}>
               Useful tips!
             </Typography>
@@ -136,45 +120,45 @@ const BookUpload = () => {
             </ul>
             <div className={classes.bar}></div>
             <div className={classes.bar}></div>
-          </div>
+          </div> */}
         </div>
         <div className={classes.rightSideCard}>
           <Grid container className={`${classes.inputArea}`}>
             <Grid item lg={2} md={2}>
               <Typography variant="h5">Title:</Typography>
             </Grid>
-            <Grid item lg={6} md={6}>
+            <Grid item lg={9} md={6}>
               <input
                 className={classes.inputField}
                 type="text"
-                onChange={(e) => setTitle(e.target.value)}
-                value={title}
+                onChange={(e) => setBook({ ...book, title: e.target.value })}
+                value={book.title}
                 placeholder="Type in the book title"
               />
             </Grid>
             <Grid item>
               <div className={classes.required}>*</div>
             </Grid>
-            <Grid item lg={2} md={2}>
+            {/* <Grid item lg={2} md={2}>
               <button
                 onClick={() => setModal(true)}
                 className={`${classes.button} ${classes.checkButton}`}
               >
                 <Typography variant="body2">Check</Typography>
               </button>
-            </Grid>
+            </Grid> */}
           </Grid>
           <Grid container className={`${classes.inputArea}`}>
             <Grid item lg={2} md={2}>
               <Typography variant="h5">Author:</Typography>
             </Grid>
-            <Grid item lg={6} md={6}>
+            <Grid item lg={9} md={6}>
               <input
                 className={classes.inputField}
                 type="text"
-                disabled
-                onChange={(e) => setAuthors(e.target.value)}
-                value={authors}
+                //disabled
+                onChange={(e) => setBook({ ...book, authors: e.target.value })}
+                value={book.authors}
                 placeholder="Type in the book author"
               />
             </Grid>
@@ -186,13 +170,13 @@ const BookUpload = () => {
             <Grid item lg={2} md={2}>
               <Typography variant="h5">Genre:</Typography>
             </Grid>
-            <Grid item lg={6} md={6}>
+            <Grid item lg={9} md={6}>
               <input
                 className={classes.inputField}
                 type="text"
-                onChange={(e) => setGenre(e.target.value)}
-                value={genre}
-                disabled
+                onChange={(e) => setBook({ ...book, genre: e.target.value })}
+                value={book.genre}
+                //disabled
                 placeholder="Type in the book genre"
               />
             </Grid>
@@ -204,13 +188,13 @@ const BookUpload = () => {
             <Grid item lg={2} md={2}>
               <Typography variant="h5">Edition:</Typography>
             </Grid>
-            <Grid item lg={3} md={3}>
+            <Grid item lg={5} md={3}>
               <input
                 className={classes.inputField}
                 type="text"
-                onChange={(e) => setEdition(e.target.value)}
-                value={edition}
-                disabled
+                onChange={(e) => setBook({ ...book, edition: e.target.value })}
+                value={book.edition}
+                //disabled
                 placeholder="Date of publishing"
               />
             </Grid>
@@ -219,18 +203,18 @@ const BookUpload = () => {
                 Pages:
               </Typography>
             </Grid>
-            <Grid item lg={1} md={1}>
+            <Grid item lg={2} md={1}>
               <input
                 className={classes.inputField}
                 type="text"
                 placeholder="#"
-                disabled
-                onChange={(e) => setPages(e.target.value)}
-                value={pages}
+                //disabled
+                onChange={(e) => setBook({ ...book, pages: e.target.value })}
+                value={book.pages}
               />
             </Grid>
           </Grid>
-          <Grid container className={`${classes.inputArea}`}>
+          {/* <Grid container className={`${classes.inputArea}`}>
             <Grid item lg={2} md={2} sx={{ display: "flex" }}>
               <Typography variant="h5">Rating:</Typography>
               <div className={classes.required}>*</div>
@@ -264,36 +248,26 @@ const BookUpload = () => {
                 value={review}
               />
             </Grid>
-          </Grid>
+          </Grid> */}
           <Grid container>
             <Grid item lg={12} md={12} className={classes.submitButtonDiv}>
-              <button
+              <Button
+                variant="contained"
+                color="success"
+                //fullWidth
                 onClick={() => {
                   handleSubmit();
                 }}
                 className={`${classes.button} ${classes.submitButton}`}
               >
                 <Typography variant="body1">Submit</Typography>
-              </button>
+              </Button>
             </Grid>
           </Grid>
         </div>
       </Paper>
 
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      {modal && (
-        <SearchBooks title={title} setModal={setModal} autoFill={autoFill} />
-      )}
+      <ToastContainer />
     </>
   );
 };

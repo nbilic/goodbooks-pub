@@ -21,6 +21,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  icons: {
+    color: "green",
+    "&:hover": {
+      cursor: "pointer",
+      color: "red",
+    },
+  },
   noCover: {
     height: 220,
     width: 140,
@@ -71,6 +78,9 @@ const useStyles = makeStyles((theme) => ({
     resize: "none",
     padding: 15,
     minHeight: 200,
+    color: "black",
+    fontFamily: "arial",
+    fontSize: 12,
   },
   submitButton: {
     marginTop: 20,
@@ -109,6 +119,10 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       cursor: "pointer",
     },
+  },
+  link: {
+    textDecoration: "none",
+    color: "crimson",
   },
 }));
 

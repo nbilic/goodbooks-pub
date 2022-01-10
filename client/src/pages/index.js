@@ -5,3 +5,4 @@ export { default as Profile } from "./Profile/Profile";
 export { default as Home } from "./Home/Home";
 export { default as Signup } from "./Signup/Signup";
 export { default as FilteredUsers } from "./FilteredUsers/FilteredUsers";
+export { default as AdminPanel } from "./AdminPanel/AdminPanel";

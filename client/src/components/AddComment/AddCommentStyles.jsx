@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 10,
     marginTop: 10,
   },
+  link: {
+    height: "fit-content",
+  },
 }));
 
 export default useStyles;

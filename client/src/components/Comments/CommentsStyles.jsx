@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
   rightSideCommentDiv: {
     display: "flex",
     border: "1px solid black",
-    width: "",
   },
   gridItem: {
     display: "flex",
@@ -29,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   grid: {
     display: "flex",
+    alignItems: "center",
   },
   buttonAction: {
     display: "flex",
@@ -40,6 +40,10 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
       color: "red",
     },
+  },
+  link: {
+    color: "inherit",
+    textDecoration: "none",
   },
 }));
 

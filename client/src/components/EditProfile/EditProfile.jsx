@@ -5,8 +5,6 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateUser } from "../../redux/api";
 import apiUrl from "../apiUrl";
-//const apiUrl = "https://goodbooks-550.herokuapp.com";
-//const apiUrl = "http://localhost:8080";
 
 const EditProfile = ({ user, setEdit, setUser }) => {
   const [description, setDescription] = useState("");

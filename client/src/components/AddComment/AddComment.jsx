@@ -1,13 +1,13 @@
-import { Typography, Grid, Paper, Avatar } from "@mui/material";
+// KOMPONENTA ODGOVORNA ZA DODAVNJA NOVOG KOMENTARA NA KNJIGE
+
+import { Avatar } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useStyles from "./AddCommentStyles";
-
 import apiUrl from "../apiUrl";
-//const apiUrl = "https://goodbooks-550.herokuapp.com";
-//const apiUrl = "http://localhost:8080";
-
+import { Button } from "@mui/material";
 const AddComment = ({ userBook, addNewComments }) => {
   const classes = useStyles({});
   const [comment, setComment] = useState("");
@@ -33,7 +33,10 @@ const AddComment = ({ userBook, addNewComments }) => {
   return (
     <div className={classes.postCommentDiv}>
       <div className={classes.postCommentDivUpper}>
-        <Avatar src={activeUser.avatar} />
+        <Link to={`/profile/${activeUser.username}`} className={classes.link}>
+          <Avatar src={activeUser.avatar} />
+        </Link>
+
         <textarea
           className={`${classes.inputField} ${classes.reviewInput}`}
           value={comment}
@@ -42,7 +45,14 @@ const AddComment = ({ userBook, addNewComments }) => {
         ></textarea>
       </div>
       <div className={classes.postCommentDivBottom}>
-        <button onClick={handleSubmit}>Submit</button>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleSubmit}
+          className={classes.submitButton}
+        >
+          SUBMIT
+        </Button>
       </div>
     </div>
   );
